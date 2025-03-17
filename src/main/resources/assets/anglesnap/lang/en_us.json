@@ -1,0 +1,14 @@
+{
+  "anglesnap.gui.screen.title": "AngleSnap Screen",
+  "anglesnap.gui.screen.name": "Name",
+  "anglesnap.gui.screen.yaw": "Yaw",
+  "anglesnap.gui.screen.pitch": "Pitch",
+  "anglesnap.gui.screen.add": "Add",
+  "anglesnap.gui.screen.delete": "Delete",
+  "anglesnap.gui.screen.edit": "Edit",
+  "anglesnap.gui.screen.save": "Save",
+
+  "anglesnap.key": "AngleSnap",
+  "anglesnap.key.openmenu": "Open AngleSnap Menu",
+  "anglesnap.key.toggleoverlay": "Toggle AngleSnap Overlay"
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "anglesnap",
+  "version": "${version}",
+  "name": "AngleSnap",
+  "description": "",
+  "authors": [
+    {
+      "name": "contaria",
+      "contact": {
+        "homepage": "https://github.com/KingContaria/"
+      }
+    }
+  ],
+  "contact": {
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "me.contaria.anglesnap.AngleSnap"
+    ]
+  },
+  "mixins": [
+    "anglesnap.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "*",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
