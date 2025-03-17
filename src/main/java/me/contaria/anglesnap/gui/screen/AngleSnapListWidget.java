@@ -7,7 +7,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.widget.*;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
@@ -72,6 +75,30 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
             widget.setY(y);
             widget.render(context, mouseX, mouseY, tickDelta);
         }
+
+        protected void renderNumberWidgetAt(DrawContext context, int mouseX, int mouseY, float tickDelta, TextFieldWidget widget, int x, int y) {
+            if (this.isNumberOrEmpty(widget.getText())) {
+                this.renderWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
+            } else {
+                widget.setEditableColor(Colors.LIGHT_RED);
+                widget.setUneditableColor(Colors.LIGHT_RED);
+                this.renderWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
+                widget.setEditableColor(Colors.WHITE);
+                widget.setUneditableColor(Colors.WHITE);
+            }
+        }
+
+        private boolean isNumberOrEmpty(String text) {
+            if (text.isEmpty()) {
+                return true;
+            }
+            try {
+                Float.parseFloat(text);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
     }
 
     public class Entry extends AbstractEntry {
@@ -117,18 +144,13 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
                     YAW_TEXT
             ));
             this.yaw.setText(String.valueOf(this.angle.yaw));
-            this.yaw.setTextPredicate(yaw -> {
-                if (yaw.isEmpty()) {
-                    return true;
-                }
+            this.yaw.setChangedListener(yaw -> {
                 try {
-                    Float.parseFloat(yaw);
+                    this.angle.yaw = Float.parseFloat(yaw);
                 } catch (NumberFormatException e) {
-                    return false;
+                    this.angle.yaw = 0.0f;
                 }
-                return true;
             });
-            this.yaw.setChangedListener(yaw -> this.angle.yaw = yaw.isEmpty() ? 0.0f : Float.parseFloat(yaw));
             this.yaw.setDrawsBackground(false);
             this.yaw.setEditableColor(Colors.WHITE);
             this.yaw.setUneditableColor(Colors.WHITE);
@@ -140,18 +162,13 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
                     PITCH_TEXT
             ));
             this.pitch.setText(String.valueOf(this.angle.pitch));
-            this.pitch.setTextPredicate(pitch -> {
-                if (pitch.isEmpty()) {
-                    return true;
-                }
+            this.pitch.setChangedListener(pitch -> {
                 try {
-                    Float.parseFloat(pitch);
+                    this.angle.pitch = Float.parseFloat(pitch);
                 } catch (NumberFormatException e) {
-                    return false;
+                    this.angle.pitch = 0.0f;
                 }
-                return true;
             });
-            this.pitch.setChangedListener(pitch -> this.angle.pitch = pitch.isEmpty() ? 0.0f : Float.parseFloat(pitch));
             this.pitch.setDrawsBackground(false);
             this.pitch.setEditableColor(Colors.WHITE);
             this.pitch.setUneditableColor(Colors.WHITE);
@@ -221,8 +238,8 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
             }
             int textY = y + (entryHeight - textRenderer.fontHeight + 1) / 2;
             this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.name, x + 5, textY);
-            this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.yaw, x + 5 + 2 * entryWidth / 5, textY);
-            this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.pitch, x + 5 + 3 * entryWidth / 5, textY);
+            this.renderNumberWidgetAt(context, mouseX, mouseY, tickDelta, this.yaw, x + 5 + 2 * entryWidth / 5, textY);
+            this.renderNumberWidgetAt(context, mouseX, mouseY, tickDelta, this.pitch, x + 5 + 3 * entryWidth / 5, textY);
             this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.edit, x + 5 + 4 * entryWidth / 5, y);
             this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.save, x + 5 + 4 * entryWidth / 5, y);
             this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.delete, x + 5 + 4 * entryWidth / 5 + 20, y);
