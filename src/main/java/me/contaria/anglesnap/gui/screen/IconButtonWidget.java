@@ -11,7 +11,15 @@ public class IconButtonWidget extends ButtonWidget {
     private final Identifier texture;
 
     public IconButtonWidget(Text message, PressAction onPress, Identifier texture) {
-        super(0, 0, 16, 16, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+        this(0, 0, 16, 16, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER, texture);
+    }
+
+    public IconButtonWidget(int x, int y, Text message, PressAction onPress, Identifier texture) {
+        this(x, y, 16, 16, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER, texture);
+    }
+
+    protected IconButtonWidget(int x, int y, int width, int height, Text message, PressAction onPress, NarrationSupplier narrationSupplier, Identifier texture) {
+        super(x, y, width, height, message, onPress, narrationSupplier);
         this.texture = texture;
         this.setTooltip(Tooltip.of(message));
     }
