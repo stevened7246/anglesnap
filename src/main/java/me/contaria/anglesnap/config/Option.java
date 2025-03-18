@@ -23,6 +23,8 @@ public abstract class Option<T> {
 
     public abstract void setValue(T value);
 
+    public abstract boolean hasWidget();
+
     public abstract ClickableWidget createWidget(int x, int y, int width, int height);
 
     protected abstract void fromJson(JsonElement jsonElement);

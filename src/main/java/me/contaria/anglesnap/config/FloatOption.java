@@ -30,6 +30,11 @@ public class FloatOption extends Option<Float> {
     }
 
     @Override
+    public boolean hasWidget() {
+        return true;
+    }
+
+    @Override
     public ClickableWidget createWidget(int x, int y, int width, int height) {
         return new SliderWidget(x, y, width, height, Text.empty(), ((double) this.getValue() - this.min) / (FloatOption.this.max - FloatOption.this.min)) {
             {

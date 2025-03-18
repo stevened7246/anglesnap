@@ -28,6 +28,11 @@ public class AngleListOption extends Option<List<AngleEntry>> {
     }
 
     @Override
+    public boolean hasWidget() {
+        return false;
+    }
+
+    @Override
     public ClickableWidget createWidget(int x, int y, int width, int height) {
         throw new UnsupportedOperationException();
     }

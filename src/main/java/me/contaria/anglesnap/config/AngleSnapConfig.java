@@ -30,7 +30,7 @@ public class AngleSnapConfig {
 
     public AngleSnapConfig() {
         this.options = new HashMap<>();
-        this.angles = new AngleListOption("angles");
+        this.angles = this.register(new AngleListOption("angles"));
         this.markerScale = this.register(new FloatOption("markerScale", 0.0f, 1.0f, 0.2f));
         this.textScale = this.register(new FloatOption("textScale", 0.0f, 1.0f, 0.2f));
         this.load();

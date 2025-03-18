@@ -17,10 +17,12 @@ import java.util.List;
 
 public class AngleSnapConfigListWidget extends ElementListWidget<AngleSnapConfigListWidget.AbstractEntry> {
     public AngleSnapConfigListWidget(MinecraftClient minecraftClient, int width, int height, int y) {
-        super(minecraftClient, width, height, y, 25, 0);
+        super(minecraftClient, width, height, y, 24, 0);
 
         for (Option<?> option : AngleSnap.CONFIG.getOptions()) {
-            this.addEntry(new Entry(option));
+            if (option.hasWidget()) {
+                this.addEntry(new Entry(option));
+            }
         }
     }
 

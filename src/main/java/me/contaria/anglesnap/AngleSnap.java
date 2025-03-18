@@ -60,15 +60,15 @@ public class AngleSnap implements ClientModInitializer {
     }
 
     private static void renderMarker(WorldRenderContext context, AngleEntry angle, float markerScale, float textScale, int color) {
-        markerScale = markerScale / 2.0f;
-        textScale = textScale / 10.0f;
+        markerScale = markerScale / 10.0f;
+        textScale = textScale / 50.0f;
 
         MinecraftClient client = MinecraftClient.getInstance();
         Camera camera = context.camera();
         Vector3f pos = Vec3d.fromPolar(
                 MathHelper.wrapDegrees(angle.pitch),
                 MathHelper.wrapDegrees(angle.yaw + 180.0f)
-        ).multiply(5.0).toVector3f();
+        ).toVector3f();
 
         MatrixStack matrices = Objects.requireNonNull(context.matrixStack());
         matrices.push();
@@ -78,7 +78,7 @@ public class AngleSnap implements ClientModInitializer {
         matrices.scale(markerScale, -markerScale, markerScale);
 
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
-        VertexConsumer consumer = Objects.requireNonNull(context.consumers()).getBuffer(RenderLayer.getDebugQuads());
+        VertexConsumer consumer = Objects.requireNonNull(context.consumers()).getBuffer(RenderLayer.getGuiOverlay());
         consumer.vertex(matrix4f, -1.0f, -1.0f, 0.0f).color(color);
         consumer.vertex(matrix4f, -1.0f, 1.0f, 0.0f).color(color);
         consumer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).color(color);

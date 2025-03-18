@@ -25,6 +25,11 @@ public class BooleanOption extends Option<Boolean> {
     }
 
     @Override
+    public boolean hasWidget() {
+        return true;
+    }
+
+    @Override
     public ClickableWidget createWidget(int x, int y, int width, int height) {
         return ButtonWidget.builder(ScreenTexts.onOrOff(this.getValue()), button -> {
             this.setValue(!this.getValue());
