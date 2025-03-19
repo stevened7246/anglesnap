@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AngleSnapConfigListWidget extends ElementListWidget<AngleSnapConfigListWidget.AbstractEntry> {
+    private static final int HOVERED_COLOR = ColorHelper.getArgb(100, 200, 200, 200);
+
     public AngleSnapConfigListWidget(MinecraftClient minecraftClient, int width, int height, int y) {
         super(minecraftClient, width, height, y, 24, 0);
 
@@ -27,13 +29,18 @@ public class AngleSnapConfigListWidget extends ElementListWidget<AngleSnapConfig
     }
 
     @Override
+    public int getRowLeft() {
+        return 6;
+    }
+
+    @Override
     public int getRowWidth() {
-        return this.width;
+        return this.width - 12;
     }
 
     @Override
     protected int getScrollbarX() {
-        return this.width - 5;
+        return this.width - 6;
     }
 
     public abstract static class AbstractEntry extends ElementListWidget.Entry<AbstractEntry> {
@@ -90,7 +97,7 @@ public class AngleSnapConfigListWidget extends ElementListWidget<AngleSnapConfig
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             TextRenderer textRenderer = this.client.textRenderer;
             if (hovered) {
-                context.fill(x, y, x + entryWidth, y + entryHeight, ColorHelper.getArgb(100, 200, 200, 200));
+                context.fill(x, y, x + entryWidth, y + entryHeight, HOVERED_COLOR);
             }
             int textY = y + (entryHeight - textRenderer.fontHeight + 1) / 2;
             context.drawText(textRenderer, this.option.getName(), x + 5, textY, Colors.WHITE, true);

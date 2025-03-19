@@ -91,7 +91,6 @@ public class AngleSnapConfig {
     public AngleEntry createAngle() {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         AngleEntry angle = new AngleEntry(
-                "",
                 player != null ? (int) (MathHelper.wrapDegrees(player.getYaw()) * 10.0f) / 10.0f : 0.0f,
                 player != null ? (int) (MathHelper.wrapDegrees(player.getPitch()) * 10.0f) / 10.0f : 0.0f
         );

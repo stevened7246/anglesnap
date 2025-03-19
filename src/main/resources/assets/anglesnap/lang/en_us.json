@@ -4,6 +4,7 @@
   "anglesnap.gui.screen.name": "Name",
   "anglesnap.gui.screen.yaw": "Yaw",
   "anglesnap.gui.screen.pitch": "Pitch",
+  "anglesnap.gui.screen.color": "RBGA",
   "anglesnap.gui.screen.add": "Add",
   "anglesnap.gui.screen.delete": "Delete",
   "anglesnap.gui.screen.edit": "Edit",
