@@ -14,7 +14,7 @@ import net.minecraft.util.math.MathHelper;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,16 +25,34 @@ public class AngleSnapConfig {
     private final Map<String, Option<?>> options;
 
     private final AngleListOption angles;
+    public final BooleanOption angleHud;
     public final FloatOption markerScale;
     public final FloatOption textScale;
+    public final BooleanOption snapToAngle;
+    public final FloatOption snapDelay;
+    public final FloatOption snapLock;
+    public final FloatOption snapDistance;
 
     public AngleSnapConfig() {
-        this.options = new HashMap<>();
+        this.options = new LinkedHashMap<>();
         this.angles = this.register(new AngleListOption("angles"));
-        this.markerScale = this.register(new FloatOption("markerScale", 0.0f, 1.0f, 0.2f));
-        this.textScale = this.register(new FloatOption("textScale", 0.0f, 1.0f, 0.2f));
+        this.angleHud = this.register("angleHud", true);
+        this.markerScale = this.register("markerScale", 0.0f, 1.0f, 0.2f);
+        this.textScale = this.register("textScale", 0.0f, 1.0f, 0.2f);
+        this.snapToAngle = this.register("snapToAngle", false);
+        this.snapDelay = this.register("snapDelay", 0.0f, 1.0f, 0.0f);
+        this.snapLock = this.register("snapLock", 0.0f, 1.0f, 0.25f);
+        this.snapDistance = this.register("snapDistance", 0.0f, 10.0f, 2.5f);
         this.load();
         this.save();
+    }
+
+    private BooleanOption register(String id, boolean defaultValue) {
+        return this.register(new BooleanOption(id, defaultValue));
+    }
+
+    private FloatOption register(String id, float min, float max, float defaultValue) {
+        return this.register(new FloatOption(id, min, max, defaultValue));
     }
 
     private <T extends Option<?>> T register(T option) {

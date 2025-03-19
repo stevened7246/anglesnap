@@ -5,6 +5,7 @@ import com.google.gson.JsonPrimitive;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.screen.ScreenTexts;
+import net.minecraft.text.Text;
 
 public class BooleanOption extends Option<Boolean> {
     private boolean value;
@@ -31,10 +32,15 @@ public class BooleanOption extends Option<Boolean> {
 
     @Override
     public ClickableWidget createWidget(int x, int y, int width, int height) {
-        return ButtonWidget.builder(ScreenTexts.onOrOff(this.getValue()), button -> {
+        return ButtonWidget.builder(this.getMessage(), button -> {
             this.setValue(!this.getValue());
-            button.setMessage(ScreenTexts.onOrOff(this.getValue()));
+            button.setMessage(BooleanOption.this.getMessage());
         }).dimensions(x, y, width, height).build();
+    }
+
+    @Override
+    public Text getDefaultMessage() {
+        return ScreenTexts.onOrOff(this.getValue());
     }
 
     @Override

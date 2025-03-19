@@ -4,13 +4,17 @@ import com.mojang.logging.LogUtils;
 import me.contaria.anglesnap.config.AngleSnapConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.option.StickyKeyBinding;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Colors;
@@ -48,18 +52,29 @@ public class AngleSnap implements ClientModInitializer {
                 () -> true
         ));
 
-        WorldRenderEvents.LAST.register(context -> {
-            if (!shouldRenderOverlay()) {
-                return;
+        WorldRenderEvents.LAST.register(AngleSnap::renderOverlay);
+
+        HudLayerRegistrationCallback.EVENT.register(drawer -> drawer.attachLayerAfter(IdentifiedLayer.DEBUG, Identifier.of("anglesnap", "overlay"), AngleSnap::renderHud));
+    }
+
+    public static boolean shouldRenderOverlay() {
+        return openOverlay.isPressed();
+    }
+
+    private static void renderHud(DrawContext context, RenderTickCounter tickCounter) {
+        if (shouldRenderOverlay()) {
+            if (AngleSnap.CONFIG.angleHud.getValue()) {
+                renderAngleHud(context);
             }
+        }
+    }
+
+    private static void renderOverlay(WorldRenderContext context) {
+        if (shouldRenderOverlay()) {
             for (AngleEntry angle : AngleSnap.CONFIG.getAngles()) {
                 renderMarker(context, angle, AngleSnap.CONFIG.markerScale.getValue(), AngleSnap.CONFIG.textScale.getValue());
             }
-        });
-    }
-
-    private static boolean shouldRenderOverlay() {
-        return openOverlay.isPressed();
+        }
     }
 
     private static void renderMarker(WorldRenderContext context, AngleEntry angle, float markerScale, float textScale) {
@@ -101,7 +116,7 @@ public class AngleSnap implements ClientModInitializer {
     }
 
     private static void drawName(WorldRenderContext context, Vector3f pos, Quaternionf rotation, AngleEntry angle, float scale) {
-        if (scale == 0.0f && angle.name.isEmpty()) {
+        if (scale == 0.0f || angle.name.isEmpty()) {
             return;
         }
 
@@ -122,5 +137,17 @@ public class AngleSnap implements ClientModInitializer {
 
         matrices.scale(1.0f / scale, 1.0f / -scale, 1.0f / scale);
         matrices.pop();
+    }
+
+    private static void renderAngleHud(DrawContext context) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.getDebugHud().shouldShowDebugHud() || client.player == null) {
+            return;
+        }
+
+        TextRenderer textRenderer = client.textRenderer;
+        String text = String.format("%.3f / %.3f", MathHelper.wrapDegrees(client.player.getYaw()), MathHelper.wrapDegrees(client.player.getPitch()));
+        context.fill(5, 5, 5 + 2 + textRenderer.getWidth(text) + 2, 5 + 2 + textRenderer.fontHeight + 2, -1873784752);
+        context.drawText(textRenderer, text, 5 + 2 + 1, 5 + 2 + 1, 14737632, false);
     }
 }

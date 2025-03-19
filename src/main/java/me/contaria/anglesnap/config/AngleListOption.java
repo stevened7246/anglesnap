@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import me.contaria.anglesnap.AngleEntry;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,11 @@ public class AngleListOption extends Option<List<AngleEntry>> {
 
     @Override
     public ClickableWidget createWidget(int x, int y, int width, int height) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Text getDefaultMessage() {
         throw new UnsupportedOperationException();
     }
 

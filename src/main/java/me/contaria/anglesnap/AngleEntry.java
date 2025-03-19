@@ -28,6 +28,12 @@ public class AngleEntry {
         this.color = color;
     }
 
+    public float getDistance(float yaw, float pitch) {
+        yaw = Math.abs(yaw - this.yaw);
+        pitch = Math.abs(pitch - this.pitch);
+        return (float) Math.sqrt(yaw * yaw + pitch * pitch);
+    }
+
     public void snap() {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {

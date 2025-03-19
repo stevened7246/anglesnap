@@ -36,14 +36,10 @@ public class FloatOption extends Option<Float> {
 
     @Override
     public ClickableWidget createWidget(int x, int y, int width, int height) {
-        return new SliderWidget(x, y, width, height, Text.empty(), ((double) this.getValue() - this.min) / (FloatOption.this.max - FloatOption.this.min)) {
-            {
-                this.updateMessage();
-            }
-
+        return new SliderWidget(x, y, width, height, FloatOption.this.getMessage(), ((double) this.getValue() - this.min) / (FloatOption.this.max - FloatOption.this.min)) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Text.literal(String.valueOf(Math.round(FloatOption.this.getValue() * 100.0f) / 100.0f)));
+                this.setMessage(FloatOption.this.getMessage());
             }
 
             @Override
@@ -51,6 +47,11 @@ public class FloatOption extends Option<Float> {
                 FloatOption.this.setValue(FloatOption.this.min + (float) ((FloatOption.this.max - FloatOption.this.min) * this.value));
             }
         };
+    }
+
+    @Override
+    public Text getDefaultMessage() {
+        return Text.literal(String.valueOf(Math.round(FloatOption.this.getValue() * 100.0f) / 100.0f));
     }
 
     @Override
