@@ -25,6 +25,7 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
     private static final Text NAME_TEXT = Text.translatable("anglesnap.gui.screen.name");
     private static final Text YAW_TEXT = Text.translatable("anglesnap.gui.screen.yaw");
     private static final Text PITCH_TEXT = Text.translatable("anglesnap.gui.screen.pitch");
+    private static final Text ICON_TEXT = Text.translatable("anglesnap.gui.screen.icon");
     private static final Text COLOR_TEXT = Text.translatable("anglesnap.gui.screen.color");
     private static final Text ADD_TEXT = Text.translatable("anglesnap.gui.screen.add");
     private static final Text DELETE_TEXT = Text.translatable("anglesnap.gui.screen.delete");
@@ -69,9 +70,10 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
     protected void renderHeader(DrawContext context, int x, int y) {
         TextRenderer textRenderer = this.client.textRenderer;
         context.drawText(textRenderer, NAME_TEXT, x + 5, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
-        context.drawText(textRenderer, YAW_TEXT, x + 5 + 2 * this.width / 6, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
-        context.drawText(textRenderer, PITCH_TEXT, x + 5 + 3 * this.width / 6, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
-        context.drawText(textRenderer, COLOR_TEXT, x + 5 + 4 * this.width / 6, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
+        context.drawText(textRenderer, YAW_TEXT, x + 5 + 5 * this.getRowWidth() / 17, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
+        context.drawText(textRenderer, PITCH_TEXT, x + 5 + 7 * this.getRowWidth() / 17, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
+        context.drawText(textRenderer, ICON_TEXT, x + 5 + 9 * this.getRowWidth() / 17, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
+        context.drawText(textRenderer, COLOR_TEXT, x + 5 + 11 * this.getRowWidth() / 17, y + (20 - textRenderer.fontHeight) / 2, Colors.WHITE, true);
     }
 
     public abstract static class AbstractEntry extends ElementListWidget.Entry<AbstractEntry> {
@@ -119,10 +121,11 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
         private final TextFieldWidget name;
         private final TextFieldWidget yaw;
         private final TextFieldWidget pitch;
+        private final IconButtonWidget icon;
         private final TextFieldWidget color;
-        private final ButtonWidget edit;
-        private final ButtonWidget save;
-        private final ButtonWidget delete;
+        private final IconButtonWidget edit;
+        private final IconButtonWidget save;
+        private final IconButtonWidget delete;
 
         private boolean editing;
 
@@ -137,7 +140,7 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
 
             this.name = this.addChild(new TextFieldWidget(
                     this.client.textRenderer,
-                    2 * AngleSnapListWidget.this.width / 6 - 5,
+                    5 * AngleSnapListWidget.this.getRowWidth() / 17 - 5,
                     20,
                     NAME_TEXT
             ));
@@ -149,7 +152,7 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
 
             this.yaw = this.addChild(new TextFieldWidget(
                     this.client.textRenderer,
-                    AngleSnapListWidget.this.width / 6 - 5,
+                    2 * AngleSnapListWidget.this.getRowWidth() / 17 - 5,
                     20,
                     YAW_TEXT
             ));
@@ -167,7 +170,7 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
 
             this.pitch = this.addChild(new TextFieldWidget(
                     this.client.textRenderer,
-                    AngleSnapListWidget.this.width / 6 - 5,
+                    2 * AngleSnapListWidget.this.getRowWidth() / 17 - 5,
                     20,
                     PITCH_TEXT
             ));
@@ -183,9 +186,11 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
             this.pitch.setEditableColor(Colors.WHITE);
             this.pitch.setUneditableColor(Colors.WHITE);
 
+            this.icon = this.addChild(new IconButtonWidget(Text.empty(), button -> ((IconButtonWidget) button).setTexture(this.angle.nextIcon()), this.angle.getIcon()));
+
             this.color = this.addChild(new TextFieldWidget(
                     this.client.textRenderer,
-                    AngleSnapListWidget.this.width / 6 - 5,
+                    3 * AngleSnapListWidget.this.getRowWidth() / 17 - 5,
                     20,
                     PITCH_TEXT
             ));
@@ -234,7 +239,11 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
             this.setEditing(this.pitch, editing);
             this.setEditing(this.color, editing);
 
-            this.color.setText(this.colorToString(this.angle.color));
+            if (!editing) {
+                this.yaw.setText(String.valueOf(this.angle.pitch));
+                this.pitch.setText(String.valueOf(this.angle.pitch));
+                this.color.setText(this.colorToString(this.angle.color));
+            }
 
             this.edit.visible = !editing;
             this.save.visible = editing;
@@ -245,6 +254,7 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
             widget.setEditable(editing);
             widget.setFocused(false);
             widget.setFocusUnlocked(editing);
+            widget.setCursorToStart(false);
         }
 
         private void delete() {
@@ -254,27 +264,35 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
 
         @Override
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            TextRenderer textRenderer = this.client.textRenderer;
             if (hovered) {
                 context.fill(x, y, x + entryWidth, y + entryHeight, HOVERED_COLOR);
             }
-            int textY = y + (entryHeight - textRenderer.fontHeight + 1) / 2;
-            this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.name, x + 5, textY);
-            this.renderNumberWidgetAt(context, mouseX, mouseY, tickDelta, this.yaw, x + 5 + 2 * entryWidth / 6, textY);
-            this.renderNumberWidgetAt(context, mouseX, mouseY, tickDelta, this.pitch, x + 5 + 3 * entryWidth / 6, textY);
-            this.renderHexadecimalWidgetAt(context, mouseX, mouseY, tickDelta, this.color, x + 5 + 4 * entryWidth / 6, textY);
+            int textY = y + (entryHeight - this.client.textRenderer.fontHeight + 1) / 2;
+            this.renderTextWidgetAt(context, mouseX, mouseY, tickDelta, this.name, x + 5, textY);
+            this.renderNumberWidgetAt(context, mouseX, mouseY, tickDelta, this.yaw, x + 5 + 5 * entryWidth / 17, textY);
+            this.renderNumberWidgetAt(context, mouseX, mouseY, tickDelta, this.pitch, x + 5 + 7 * entryWidth / 17, textY);
+            this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.icon, x + 5 + 9 * entryWidth / 17, y);
+            this.renderHexadecimalWidgetAt(context, mouseX, mouseY, tickDelta, this.color, x + 5 + 11 * entryWidth / 17, textY);
             this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.edit, x + entryWidth - 5 - 40, y);
             this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.save, x + entryWidth - 5 - 40, y);
             this.renderWidgetAt(context, mouseX, mouseY, tickDelta, this.delete, x + entryWidth - 5 - 20, y);
         }
 
+        private void renderTextWidgetAt(DrawContext context, int mouseX, int mouseY, float tickDelta, TextFieldWidget widget, int x, int y) {
+            if (this.editing) {
+                this.renderWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
+            } else {
+                context.drawText(this.client.textRenderer, widget.getText(), x, y, Colors.WHITE, true);
+            }
+        }
+
         private void renderNumberWidgetAt(DrawContext context, int mouseX, int mouseY, float tickDelta, TextFieldWidget widget, int x, int y) {
             if (this.isNumberOrEmpty(widget.getText())) {
-                this.renderWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
+                this.renderTextWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
             } else {
                 widget.setEditableColor(Colors.LIGHT_RED);
                 widget.setUneditableColor(Colors.LIGHT_RED);
-                this.renderWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
+                this.renderTextWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
                 widget.setEditableColor(Colors.WHITE);
                 widget.setUneditableColor(Colors.WHITE);
             }
@@ -294,11 +312,11 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
 
         private void renderHexadecimalWidgetAt(DrawContext context, int mouseX, int mouseY, float tickDelta, TextFieldWidget widget, int x, int y) {
             if (this.isHexadecimalOrEmpty(widget.getText())) {
-                this.renderWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
+                this.renderTextWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
             } else {
                 widget.setEditableColor(Colors.LIGHT_RED);
                 widget.setUneditableColor(Colors.LIGHT_RED);
-                this.renderWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
+                this.renderTextWidgetAt(context, mouseX, mouseY, tickDelta, widget, x, y);
                 widget.setEditableColor(Colors.WHITE);
                 widget.setUneditableColor(Colors.WHITE);
             }

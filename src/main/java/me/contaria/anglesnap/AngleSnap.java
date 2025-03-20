@@ -33,8 +33,6 @@ public class AngleSnap implements ClientModInitializer {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final AngleSnapConfig CONFIG = new AngleSnapConfig();
 
-    private static final Identifier MARKER_TEXTURE = Identifier.of("anglesnap", "textures/gui/marker.png");
-
     public static KeyBinding openMenu;
     public static KeyBinding openOverlay;
 
@@ -105,7 +103,8 @@ public class AngleSnap implements ClientModInitializer {
         matrices.scale(scale, -scale, scale);
 
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
-        VertexConsumer consumer = Objects.requireNonNull(context.consumers()).getBuffer(RenderLayer.getGuiTexturedOverlay(MARKER_TEXTURE));
+        RenderLayer layer = RenderLayer.getGuiTexturedOverlay(angle.getIcon());
+        VertexConsumer consumer = Objects.requireNonNull(context.consumers()).getBuffer(layer);
         consumer.vertex(matrix4f, -1.0f, -1.0f, 0.0f).color(angle.color).texture(0.0f, 0.0f);
         consumer.vertex(matrix4f, -1.0f, 1.0f, 0.0f).color(angle.color).texture(0.0f, 1.0f);
         consumer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).color(angle.color).texture(1.0f, 1.0f);
