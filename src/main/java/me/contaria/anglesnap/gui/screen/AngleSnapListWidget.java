@@ -237,6 +237,7 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
             this.setEditing(this.name, editing);
             this.setEditing(this.yaw, editing);
             this.setEditing(this.pitch, editing);
+            this.setEditing(this.icon, editing);
             this.setEditing(this.color, editing);
 
             if (!editing) {
@@ -247,6 +248,10 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
 
             this.edit.visible = !editing;
             this.save.visible = editing;
+        }
+
+        private void setEditing(ClickableWidget widget, boolean editing) {
+            widget.active = editing;
         }
 
         private void setEditing(TextFieldWidget widget, boolean editing) {
