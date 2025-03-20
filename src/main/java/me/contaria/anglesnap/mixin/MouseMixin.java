@@ -6,6 +6,7 @@ import me.contaria.anglesnap.AngleEntry;
 import me.contaria.anglesnap.AngleSnap;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -55,7 +56,7 @@ public abstract class MouseMixin {
         AngleEntry closestAngle = null;
         float closestDistance = AngleSnap.CONFIG.snapDistance.getValue();
         for (AngleEntry angle : AngleSnap.CONFIG.getAngles()) {
-            float distance = angle.getDistance(player.getYaw(), player.getPitch());
+            float distance = angle.getDistance(MathHelper.wrapDegrees(player.getYaw()), MathHelper.wrapDegrees(player.getPitch()));
             if (distance < closestDistance) {
                 closestAngle = angle;
                 closestDistance = distance;
