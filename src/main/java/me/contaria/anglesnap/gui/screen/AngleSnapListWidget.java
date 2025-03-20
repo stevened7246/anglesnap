@@ -240,7 +240,7 @@ public class AngleSnapListWidget extends ElementListWidget<AngleSnapListWidget.A
             this.setEditing(this.color, editing);
 
             if (!editing) {
-                this.yaw.setText(String.valueOf(this.angle.pitch));
+                this.yaw.setText(String.valueOf(this.angle.yaw));
                 this.pitch.setText(String.valueOf(this.angle.pitch));
                 this.color.setText(this.colorToString(this.angle.color));
             }
