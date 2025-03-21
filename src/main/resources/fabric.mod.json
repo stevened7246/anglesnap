@@ -3,7 +3,7 @@
   "id": "anglesnap",
   "version": "${version}",
   "name": "AngleSnap",
-  "description": "",
+  "description": "Save and snap to precise angles.",
   "authors": [
     {
       "name": "contaria",
@@ -13,6 +13,9 @@
     }
   ],
   "contact": {
+    "homepage": "https://github.com/KingContaria/anglesnap",
+    "sources": "https://github.com/KingContaria/anglesnap",
+    "issues": "https://github.com/KingContaria/anglesnap/issues"
   },
   "license": "MIT",
   "environment": "client",
@@ -29,8 +32,8 @@
   ],
   "depends": {
     "fabricloader": ">=0.16.10",
-    "minecraft": "*",
+    "minecraft": "1.21.4",
     "java": ">=21",
-    "fabric-api": "*"
+    "fabric-api": ">=0.116.0"
   }
 }
