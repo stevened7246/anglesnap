@@ -8,7 +8,6 @@ public class ModMenuApiImpl implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return AngleSnapScreen::new;
+        return AngleSnapScreen::create;
     }
-
 }

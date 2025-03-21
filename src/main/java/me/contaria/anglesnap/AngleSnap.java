@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import me.contaria.anglesnap.config.AngleSnapConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
@@ -19,6 +20,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
@@ -51,8 +53,16 @@ public class AngleSnap implements ClientModInitializer {
         ));
 
         WorldRenderEvents.LAST.register(AngleSnap::renderOverlay);
-
         HudLayerRegistrationCallback.EVENT.register(drawer -> drawer.attachLayerAfter(IdentifiedLayer.DEBUG, Identifier.of("anglesnap", "overlay"), AngleSnap::renderHud));
+
+        ClientPlayConnectionEvents.JOIN.register((networkHandler, packetSender, client) -> {
+            if (client.isIntegratedServerRunning()) {
+                AngleSnap.CONFIG.loadAngles(Objects.requireNonNull(client.getServer()).getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString(), false);
+            } else {
+                AngleSnap.CONFIG.loadAngles(Objects.requireNonNull(networkHandler.getServerInfo()).address, true);
+            }
+        });
+        ClientPlayConnectionEvents.DISCONNECT.register((networkHandler, client) -> AngleSnap.CONFIG.unloadAngles());
     }
 
     public static boolean shouldRenderOverlay() {

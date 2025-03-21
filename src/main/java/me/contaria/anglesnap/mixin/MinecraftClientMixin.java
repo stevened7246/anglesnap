@@ -4,7 +4,6 @@ import me.contaria.anglesnap.AngleSnap;
 import me.contaria.anglesnap.gui.screen.AngleSnapScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,10 +18,6 @@ public abstract class MinecraftClientMixin {
     public Screen currentScreen;
 
     @Shadow
-    @Nullable
-    public ClientPlayerEntity player;
-
-    @Shadow
     public abstract void setScreen(@Nullable Screen screen);
 
     @Inject(
@@ -31,8 +26,8 @@ public abstract class MinecraftClientMixin {
     )
     private void openMenu(CallbackInfo ci) {
         while (AngleSnap.openMenu.wasPressed()) {
-            if (this.currentScreen == null && this.player != null) {
-                this.setScreen(new AngleSnapScreen(null));
+            if (AngleSnap.CONFIG.hasAngles() && this.currentScreen == null) {
+                this.setScreen(AngleSnapScreen.create(null));
             }
         }
     }
