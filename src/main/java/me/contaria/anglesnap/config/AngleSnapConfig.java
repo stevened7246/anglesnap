@@ -68,7 +68,7 @@ public class AngleSnapConfig {
 
     public void loadAngles(String name, boolean multiplayer) {
         this.anglesPath = CONFIG_DIR.resolve(multiplayer ? "multiplayer" : "singleplayer")
-                .resolve(name)
+                .resolve(name.replaceAll("[^a-zA-Z0-9-_. ]", "_"))
                 .resolve("angles.json");
         this.loadAngles();
         this.saveAngles();
