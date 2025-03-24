@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -67,11 +68,18 @@ public class AngleSnapConfig {
     }
 
     public void loadAngles(String name, boolean multiplayer) {
-        this.anglesPath = CONFIG_DIR.resolve(multiplayer ? "multiplayer" : "singleplayer")
-                .resolve(name.replaceAll("[^a-zA-Z0-9-_. ]", "_"))
-                .resolve("angles.json");
+        this.anglesPath = this.resolveDirectory(name, multiplayer).resolve("angles.json");
         this.loadAngles();
         this.saveAngles();
+    }
+
+    private Path resolveDirectory(String name, boolean multiplayer) {
+        Path path = CONFIG_DIR.resolve(multiplayer ? "multiplayer" : "singleplayer");
+        try {
+            return path.resolve(name);
+        } catch (InvalidPathException e) {
+            return path.resolve(name.replaceAll("[^a-zA-Z0-9-_. ]", "_"));
+        }
     }
 
     public void unloadAngles() {
