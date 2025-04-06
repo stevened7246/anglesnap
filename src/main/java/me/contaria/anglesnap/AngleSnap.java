@@ -123,8 +123,9 @@ public class AngleSnap implements ClientModInitializer {
         matrices.scale(scale, -scale, scale);
 
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
+        MinecraftClient client = MinecraftClient.getInstance();
         RenderLayer layer = RenderLayer.getGuiTexturedOverlay(angle.getIcon());
-        VertexConsumer consumer = Objects.requireNonNull(context.consumers()).getBuffer(layer);
+        VertexConsumer consumer = client.getBufferBuilders().getEffectVertexConsumers().getBuffer(layer);
         consumer.vertex(matrix4f, -1.0f, -1.0f, 0.0f).color(angle.color).texture(0.0f, 0.0f);
         consumer.vertex(matrix4f, -1.0f, 1.0f, 0.0f).color(angle.color).texture(0.0f, 1.0f);
         consumer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).color(angle.color).texture(1.0f, 1.0f);
@@ -151,7 +152,7 @@ public class AngleSnap implements ClientModInitializer {
         float x = -textRenderer.getWidth(angle.name) / 2.0f;
         int backgroundColor = (int) (client.options.getTextBackgroundOpacity(0.25f) * 255.0f) << 24;
         textRenderer.draw(
-                angle.name, x, -15.0f, Colors.WHITE, false, matrix4f, context.consumers(), TextRenderer.TextLayerType.SEE_THROUGH, backgroundColor, 15
+                angle.name, x, -15.0f, Colors.WHITE, false, matrix4f, client.getBufferBuilders().getEffectVertexConsumers(), TextRenderer.TextLayerType.SEE_THROUGH, backgroundColor, 15
         );
 
         matrices.scale(1.0f / scale, 1.0f / -scale, 1.0f / scale);
