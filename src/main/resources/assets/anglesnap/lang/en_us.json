@@ -1,11 +1,15 @@
 {
   "anglesnap.gui.screen.title": "AngleSnap Screen",
+  "anglesnap.gui.screen.title.camerasnap": "CameraSnap Screen",
   "anglesnap.gui.screen.configure": "Configure...",
   "anglesnap.gui.screen.name": "Name",
   "anglesnap.gui.screen.yaw": "Yaw",
   "anglesnap.gui.screen.pitch": "Pitch",
   "anglesnap.gui.screen.icon": "Icon",
   "anglesnap.gui.screen.color": "RBGA",
+  "anglesnap.gui.screen.x": "X",
+  "anglesnap.gui.screen.y": "Y",
+  "anglesnap.gui.screen.z": "Z",
   "anglesnap.gui.screen.add": "Add",
   "anglesnap.gui.screen.delete": "Delete",
   "anglesnap.gui.screen.edit": "Edit",
@@ -31,5 +35,6 @@
 
   "anglesnap.key": "AngleSnap",
   "anglesnap.key.openmenu": "Open AngleSnap Menu",
-  "anglesnap.key.openoverlay": "Toggle AngleSnap Overlay"
+  "anglesnap.key.openoverlay": "Toggle AngleSnap Overlay",
+  "anglesnap.key.camerapositions": "Select/Toggle Camera Position"
 }

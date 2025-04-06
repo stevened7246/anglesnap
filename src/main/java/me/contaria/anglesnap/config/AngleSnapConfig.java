@@ -6,10 +6,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import me.contaria.anglesnap.AngleEntry;
 import me.contaria.anglesnap.AngleSnap;
+import me.contaria.anglesnap.CameraPosEntry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -39,6 +41,11 @@ public class AngleSnapConfig {
     @Nullable
     private List<AngleEntry> angles;
 
+    @Nullable
+    private Path cameraPositionsPath;
+    @Nullable
+    private List<CameraPosEntry> cameraPositions;
+
     public AngleSnapConfig() {
         this.options = new LinkedHashMap<>();
         this.angleHud = this.register("angleHud", true);
@@ -67,10 +74,15 @@ public class AngleSnapConfig {
         return option;
     }
 
-    public void loadAngles(String name, boolean multiplayer) {
-        this.anglesPath = this.resolveDirectory(name, multiplayer).resolve("angles.json");
-        this.loadAngles();
-        this.saveAngles();
+    public void loadAnglesAndCameraPositions(String name, boolean multiplayer) {
+        Path directory = this.resolveDirectory(name, multiplayer);
+        this.loadAngles(directory);
+        this.loadCameraPositions(directory);
+    }
+
+    public void unloadAnglesAndCameraPositions() {
+        this.unloadAngles();
+        this.unloadCameraPositions();
     }
 
     private Path resolveDirectory(String name, boolean multiplayer) {
@@ -80,6 +92,12 @@ public class AngleSnapConfig {
         } catch (InvalidPathException e) {
             return path.resolve(name.replaceAll("[^a-zA-Z0-9-_. ]", "_"));
         }
+    }
+
+    public void loadAngles(Path directory) {
+        this.anglesPath = directory.resolve("angles.json");
+        this.loadAngles();
+        this.saveAngles();
     }
 
     public void unloadAngles() {
@@ -122,6 +140,56 @@ public class AngleSnapConfig {
             }
         } catch (Exception e) {
             AngleSnap.LOGGER.error("[AngleSnap] Failed to write angles file at '{}'!", this.anglesPath, e);
+        }
+    }
+
+    public void loadCameraPositions(Path directory) {
+        this.cameraPositionsPath = directory.resolve("camera_positions.json");
+        this.loadCameraPositions();
+        this.saveCameraPositions();
+    }
+
+    public void unloadCameraPositions() {
+        AngleSnap.currentCameraPos = null;
+        this.saveCameraPositions();
+        this.cameraPositionsPath = null;
+        this.cameraPositions = null;
+    }
+
+    private void loadCameraPositions() {
+        if (this.cameraPositionsPath == null) {
+            return;
+        }
+        AngleSnap.LOGGER.info("[AngleSnap] Loading camera positions file...");
+        try {
+            if (Files.exists(this.cameraPositionsPath)) {
+                try (JsonReader reader = GSON.newJsonReader(Files.newBufferedReader(this.cameraPositionsPath, StandardCharsets.UTF_8))) {
+                    this.cameraPositions = CameraPosEntry.listFromJson(GSON.fromJson(reader, JsonObject.class));
+                }
+            } else {
+                this.cameraPositions = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            AngleSnap.LOGGER.error("[AngleSnap] Failed to read camera positions file at '{}'!", this.cameraPositionsPath, e);
+            this.cameraPositions = new ArrayList<>();
+        }
+    }
+
+    public void saveCameraPositions() {
+        if (this.cameraPositionsPath == null || this.cameraPositions == null) {
+            return;
+        }
+        AngleSnap.LOGGER.info("[AngleSnap] Writing camera positions file...");
+        try {
+            if (this.cameraPositions.isEmpty()) {
+                Files.deleteIfExists(this.cameraPositionsPath);
+                Files.deleteIfExists(this.cameraPositionsPath.getParent());
+            } else {
+                Files.createDirectories(this.cameraPositionsPath.getParent());
+                Files.writeString(this.cameraPositionsPath, GSON.toJson(CameraPosEntry.listToJson(this.cameraPositions)));
+            }
+        } catch (Exception e) {
+            AngleSnap.LOGGER.error("[AngleSnap] Failed to write camera positions file at '{}'!", this.cameraPositionsPath, e);
         }
     }
 
@@ -199,6 +267,37 @@ public class AngleSnapConfig {
         );
         this.angles.add(angle);
         return angle;
+    }
+
+    public boolean hasCameraPositions() {
+        return this.cameraPositions != null;
+    }
+
+    public List<CameraPosEntry> getCameraPositions() {
+        return this.cameraPositions != null ? Collections.unmodifiableList(this.cameraPositions) : Collections.emptyList();
+    }
+
+    public void removeCameraPosition(CameraPosEntry pos) {
+        if (this.cameraPositions == null) {
+            AngleSnap.LOGGER.warn("[AngleSnap] Tried to remove camera position but no positions are currently loaded!");
+            return;
+        }
+        this.cameraPositions.remove(pos);
+    }
+
+    public CameraPosEntry createCameraPosition() {
+        if (this.cameraPositions == null) {
+            AngleSnap.LOGGER.warn("[AngleSnap] Tried to create camera position but no positions are currently loaded!");
+            return null;
+        }
+        Vec3d cameraPos = MinecraftClient.getInstance().gameRenderer.getCamera().getPos();
+        CameraPosEntry pos = new CameraPosEntry(
+                (int) (cameraPos.getX() * 100.0) / 100.0,
+                (int) (cameraPos.getY() * 100.0) / 100.0,
+                (int) (cameraPos.getZ() * 100.0) / 100.0
+        );
+        this.cameraPositions.add(pos);
+        return pos;
     }
 
     public Iterable<Option<?>> getOptions() {

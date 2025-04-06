@@ -1,6 +1,7 @@
 package me.contaria.anglesnap.mixin;
 
 import me.contaria.anglesnap.AngleSnap;
+import me.contaria.anglesnap.gui.camerasnap.CameraSnapScreen;
 import me.contaria.anglesnap.gui.screen.AngleSnapScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -28,6 +29,15 @@ public abstract class MinecraftClientMixin {
         while (AngleSnap.openMenu.wasPressed()) {
             if (AngleSnap.CONFIG.hasAngles() && this.currentScreen == null) {
                 this.setScreen(AngleSnapScreen.create(null));
+            }
+        }
+        while (AngleSnap.cameraPositions.wasPressed()) {
+            if (AngleSnap.currentCameraPos == null) {
+                if (AngleSnap.CONFIG.hasCameraPositions() && this.currentScreen == null) {
+                    this.setScreen(CameraSnapScreen.create(null));
+                }
+            } else {
+                AngleSnap.currentCameraPos = null;
             }
         }
     }

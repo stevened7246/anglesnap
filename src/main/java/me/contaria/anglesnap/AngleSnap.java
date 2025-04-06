@@ -23,6 +23,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -37,6 +38,10 @@ public class AngleSnap implements ClientModInitializer {
 
     public static KeyBinding openMenu;
     public static KeyBinding openOverlay;
+    public static KeyBinding cameraPositions;
+
+    @Nullable
+    public static CameraPosEntry currentCameraPos;
 
     @Override
     public void onInitializeClient() {
@@ -51,18 +56,23 @@ public class AngleSnap implements ClientModInitializer {
                 "anglesnap.key",
                 () -> true
         ));
+        cameraPositions = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "anglesnap.key.camerapositions",
+                GLFW.GLFW_KEY_F8,
+                "anglesnap.key"
+        ));
 
         WorldRenderEvents.LAST.register(AngleSnap::renderOverlay);
         HudLayerRegistrationCallback.EVENT.register(drawer -> drawer.attachLayerAfter(IdentifiedLayer.DEBUG, Identifier.of("anglesnap", "overlay"), AngleSnap::renderHud));
 
         ClientPlayConnectionEvents.JOIN.register((networkHandler, packetSender, client) -> {
             if (client.isIntegratedServerRunning()) {
-                AngleSnap.CONFIG.loadAngles(Objects.requireNonNull(client.getServer()).getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString(), false);
+                AngleSnap.CONFIG.loadAnglesAndCameraPositions(Objects.requireNonNull(client.getServer()).getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString(), false);
             } else {
-                AngleSnap.CONFIG.loadAngles(Objects.requireNonNull(networkHandler.getServerInfo()).address, true);
+                AngleSnap.CONFIG.loadAnglesAndCameraPositions(Objects.requireNonNull(networkHandler.getServerInfo()).address, true);
             }
         });
-        ClientPlayConnectionEvents.DISCONNECT.register((networkHandler, client) -> AngleSnap.CONFIG.unloadAngles());
+        ClientPlayConnectionEvents.DISCONNECT.register((networkHandler, client) -> AngleSnap.CONFIG.unloadAnglesAndCameraPositions());
     }
 
     public static boolean shouldRenderOverlay() {

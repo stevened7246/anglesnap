@@ -4,6 +4,7 @@
   "package": "me.contaria.anglesnap.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "CameraMixin",
     "MinecraftClientMixin",
     "MouseMixin"
   ],
