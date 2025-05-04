@@ -36,6 +36,7 @@
   "anglesnap.gui.config.option.snapLock.value.0.0": "OFF",
   "anglesnap.gui.config.option.snapDistance": "Snap Distance",
   "anglesnap.gui.config.option.snapDistance.value": "%s°",
+  "anglesnap.gui.config.option.disableMultiplayerWarning": "Disable Multiplayer Warning",
 
   "anglesnap.key": "AngleSnap",
   "anglesnap.key.openmenu": "Open AngleSnap Menu",
