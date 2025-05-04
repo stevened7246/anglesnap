@@ -3,6 +3,7 @@ package me.contaria.anglesnap.gui.screen;
 import me.contaria.anglesnap.AngleEntry;
 import me.contaria.anglesnap.AngleSnap;
 import me.contaria.anglesnap.gui.config.AngleSnapConfigScreen;
+import me.contaria.anglesnap.gui.warning.AngleSnapWarningScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -47,6 +48,18 @@ public class AngleSnapScreen extends Screen {
 
     public static Screen create(Screen parent) {
         if (AngleSnap.CONFIG.hasAngles()) {
+            if (AngleSnap.isInMultiplayer() && !AngleSnap.CONFIG.disableMultiplayerWarning.getValue()) {
+                return AngleSnapWarningScreen.create(
+                        disableMultiplayerWarning -> {
+                            if (disableMultiplayerWarning) {
+                                AngleSnap.CONFIG.disableMultiplayerWarning.setValue(true);
+                                AngleSnap.CONFIG.save();
+                            }
+                            MinecraftClient.getInstance().setScreen(new AngleSnapScreen(parent));
+                        },
+                        () -> MinecraftClient.getInstance().setScreen(parent)
+                );
+            }
             return new AngleSnapScreen(parent);
         }
         return new AngleSnapConfigScreen(parent);

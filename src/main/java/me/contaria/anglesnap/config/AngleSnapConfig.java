@@ -35,6 +35,7 @@ public class AngleSnapConfig {
     public final FloatOption snapDelay;
     public final FloatOption snapLock;
     public final FloatOption snapDistance;
+    public final BooleanOption disableMultiplayerWarning;
 
     @Nullable
     private Path anglesPath;
@@ -55,6 +56,7 @@ public class AngleSnapConfig {
         this.snapDelay = this.register("snapDelay", 0.0f, 1.0f, 0.0f);
         this.snapLock = this.register("snapLock", 0.0f, 1.0f, 0.25f);
         this.snapDistance = this.register("snapDistance", 0.0f, 10.0f, 2.5f);
+        this.disableMultiplayerWarning = this.register("disableMultiplayerWarning", false);
         this.load();
         this.save();
     }

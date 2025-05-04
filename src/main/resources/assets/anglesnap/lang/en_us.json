@@ -15,6 +15,10 @@
   "anglesnap.gui.screen.edit": "Edit",
   "anglesnap.gui.screen.save": "Save",
 
+  "anglesnap.gui.warning.header": "AngleSnap Multiplayer Warning",
+  "anglesnap.gui.warning.message": "Some servers may not allow some of AngleSnaps features!\nSnapping to angles through the UI in particular can trigger some anticheat plugins.\nPlease check your servers rules and ask someone if still in doubt.",
+  "anglesnap.gui.warning.checkbox": "Do not show this screen again",
+
   "anglesnap.gui.config.title": "AngleSnap Config",
   "anglesnap.gui.config.option.angleHud": "Show Precise Angle",
   "anglesnap.gui.config.option.markerScale": "Marker Scale",

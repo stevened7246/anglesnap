@@ -170,4 +170,8 @@ public class AngleSnap implements ClientModInitializer {
         context.fill(5, 5, 5 + 2 + textRenderer.getWidth(text) + 2, 5 + 2 + textRenderer.fontHeight + 2, -1873784752);
         context.drawText(textRenderer, text, 5 + 2 + 1, 5 + 2 + 1, 14737632, false);
     }
+
+    public static boolean isInMultiplayer() {
+        return MinecraftClient.getInstance().world != null && !MinecraftClient.getInstance().isInSingleplayer();
+    }
 }
